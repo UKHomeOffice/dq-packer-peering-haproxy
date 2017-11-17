@@ -1,0 +1,58 @@
+---
+
+- name: Pre-reqs for ansible to run
+  hosts: all
+  gather_facts: false
+  become: yes
+  pre_tasks:
+    - raw: test -e /usr/bin/python || ( yum -y update && yum install -y python-minimal)
+
+- name: Transfer and execute HAProxy install script.
+  hosts: all
+  remote_user: ec2-user
+  become: yes
+  tasks:
+     - name: Transfer the script
+       copy: src=templates/haproxyinstall.sh dest=/home/ec2-user mode=0777
+
+     - name: Execute the script
+       command: sh /home/ec2-user/haproxyinstall.sh
+
+- name: Transfer default HAProxy config
+  hosts: all
+  remote_user: ec2-user
+  become: yes
+  tasks:
+     - name: Transfer the script
+       copy: src=templates/haproxy.cfg dest=/etc/haproxy/haproxy.cfg mode=0777
+
+- name: Install EPEL repo.
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install epel
+      yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
+
+- name: Install Python-Pip and AWSCLI
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install python-pip
+      yum: name=python-pip
+
+    - name: Install AWSCLI
+      pip: name=awscli
+
+- name: Transfer and setup recurring S3 pull cron job.
+  hosts: all
+  remote_user: ec2-user
+  become: yes
+  tasks:
+     - name: Transfer the script
+       copy: src=templates/gets3content.sh dest=/home/ec2-user mode=0777
+
+     - cron:
+        name: Copy HAProxy config from S3
+        minute: "*"
+        hour: "*"
+        job: "/bin/bash /home/ec2-user/gets3content.sh"
