@@ -7,6 +7,43 @@
   pre_tasks:
     - raw: test -e /usr/bin/python || ( yum -y update && yum install -y python-minimal)
 
+- name: Install and configure rsyslog service
+  hosts: all
+  become: yes
+  vars:
+    rsyslog_repeated_msg_reduction: "on"
+
+  tasks:
+    - yum: name=rsyslog
+
+    - name: Create rsyslog.conf configuration file
+      copy:
+        src: templates/rsyslog.conf
+        dest: /etc/rsyslog.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - file:
+        path: /etc/rsyslog.d/
+        owner: root
+        group: root
+        mode: 0644
+        state: directory
+
+    - name: Create 49-haproxy.conf configuration file
+      copy:
+        src: templates/49-haproxy.conf
+        dest: /etc/rsyslog.d/49-haproxy.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - service:
+        name: rsyslog
+        enabled: yes
+        state: restarted
+
 - name: Transfer and execute HAProxy install script.
   hosts: all
   become: yes
