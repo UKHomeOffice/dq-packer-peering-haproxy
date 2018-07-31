@@ -59,6 +59,8 @@
     - name: Install AWSCLI
       pip: name=awscli
 
+    - name: Update all libraries
+      yum: name=* state=latest
 
     - name: Get haproxy
       unarchive:
