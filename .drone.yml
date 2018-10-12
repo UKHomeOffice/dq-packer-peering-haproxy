@@ -20,8 +20,6 @@ pipeline:
     commands:
       - export HOME=/home/packer
       - packer build packer.json
-    when:
-      event: push
 
   packer-copy-prod:
     image: chrisns/packer-encrypt-copy
