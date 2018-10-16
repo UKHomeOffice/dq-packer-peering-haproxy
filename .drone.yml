@@ -29,6 +29,8 @@ pipeline:
     secrets:
       - PROD_ACC_ID
       - PROD_ACC_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     commands:
       - export filters="--owner 093401982388 --filters "Name=name,Values=dq-peering-haproxy*""
       - export aws_id=${PROD_ACC_ID}
@@ -47,6 +49,8 @@ pipeline:
     secrets:
       - NOTPROD_ACC_ID
       - NOTPROD_ACC_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     commands:
       - export filters="--owner 093401982388 --filters "Name=name,Values=dq-peering-haproxy*""
       - export aws_id=${NOTPROD_ACC_ID}
