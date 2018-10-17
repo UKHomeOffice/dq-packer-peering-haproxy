@@ -23,6 +23,23 @@ pipeline:
     when:
       event: push
 
+  packer-copy-notprod:
+    image: chrisns/packer-encrypt-copy
+    pull: true
+    secrets:
+      - NOTPROD_ACC_ID
+      - NOTPROD_ACC_KEY
+    commands:
+      - export filters="--owner 093401982388 --filters "Name=name,Values=dq-peering-haproxy*""
+      - export aws_id=$${NOTPROD_ACC_ID}
+      - export aws_key=$${NOTPROD_ACC_KEY}
+      - export region=eu-west-2
+      - export HOME=/home/packer
+      - cd /home/packer
+      - ./build.sh
+    when:
+      event: push      
+
   packer-copy-prod:
     image: chrisns/packer-encrypt-copy
     pull: true
@@ -40,20 +57,3 @@ pipeline:
     when:
       event: push
       branch: master
-
-  packer-copy-notprod:
-    image: chrisns/packer-encrypt-copy
-    pull: true
-    secrets:
-      - NOTPROD_ACC_ID
-      - NOTPROD_ACC_KEY
-    commands:
-      - export filters="--owner 093401982388 --filters "Name=name,Values=dq-peering-haproxy*""
-      - export aws_id=$${NOTPROD_ACC_ID}
-      - export aws_key=$${NOTPROD_ACC_KEY}
-      - export region=eu-west-2
-      - export HOME=/home/packer
-      - cd /home/packer
-      - ./build.sh
-    when:
-      event: push
