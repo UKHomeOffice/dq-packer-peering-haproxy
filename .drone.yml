@@ -1,19 +1,19 @@
 pipeline:
 
   validate:
-    image: chrisns/packer-ansible
+    image: quay.io/ukhomeofficedigital/dq-packer-ansible
     commands:
       - export HOME=/home/packer
       - packer validate packer.json
 
   inspect:
-    image: chrisns/packer-ansible
+    image: quay.io/ukhomeofficedigital/dq-packer-ansible
     commands:
       - export HOME=/home/packer
       - packer inspect packer.json
 
   build:
-    image: chrisns/packer-ansible
+    image: quay.io/ukhomeofficedigital/dq-packer-ansible
     secrets:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
@@ -24,7 +24,7 @@ pipeline:
       event: push
 
   packer-copy-notprod:
-    image: chrisns/packer-encrypt-copy
+    image: quay.io/ukhomeofficedigital/dq-packer-encrypt-copy
     pull: true
     secrets:
       - NOTPROD_ACC_ID
@@ -38,10 +38,10 @@ pipeline:
       - cd /home/packer
       - ./build.sh
     when:
-      event: push      
+      event: push
 
   packer-copy-prod:
-    image: chrisns/packer-encrypt-copy
+    image: quay.io/ukhomeofficedigital/dq-packer-encrypt-copy
     pull: true
     secrets:
       - PROD_ACC_ID
