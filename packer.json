@@ -32,7 +32,8 @@
       "ssh_username": "ec2-user",
       "ami_name": "dq-peering-haproxy {{isotime | clean_ami_name}}",
       "ami_groups": [
-        "all"
+        "483846886818",
+        "337779336338"
       ]
     }
   ],
