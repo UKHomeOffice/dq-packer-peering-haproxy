@@ -39,6 +39,7 @@ pipeline:
       - ./build.sh
     when:
       event: push
+      branch: master
 
   packer-copy-prod:
     image: quay.io/ukhomeofficedigital/dq-packer-encrypt-copy
