@@ -7,6 +7,10 @@
   pre_tasks:
     - raw: test -e /usr/bin/python || ( yum -y update && yum install -y python-minimal)
 
+- name: Set timezone to Europe/London
+  timezone:
+    name: Europe/London
+
 - name: Install and configure rsyslog service
   hosts: all
   become: yes
