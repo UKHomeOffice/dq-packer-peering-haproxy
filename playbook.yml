@@ -12,7 +12,7 @@
   become: yes
   vars:
     rsyslog_repeated_msg_reduction: "on"
-    
+
   tasks:
     - name: Set timezone to Europe/London
       timezone:
@@ -59,6 +59,12 @@
     - yum: name=wget
     - yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
     -  yum: name=python-pip
+
+    - name: Remove urllib3
+    pip:
+      name: urllib3
+      state: absent
+    sudo: yes
 
     - name: Install AWSCLI
       pip: name=awscli
