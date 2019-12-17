@@ -60,16 +60,14 @@
     - yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
     -  yum: name=python-pip
 
-    - name: Remove urllib3
-      pip:
-        name: urllib3
-        state: absent
-
     - name: Install AWSCLI
       pip: name=awscli
 
-    - name: Update all libraries
-      yum: name=* state=latest
+    - name: upgrade all packages, excluding urllib
+      yum:
+        name: '*'
+        state: latest
+        exclude: urllib*
 
     - name: Get haproxy
       unarchive:
