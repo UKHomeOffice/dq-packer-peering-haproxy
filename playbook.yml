@@ -61,10 +61,9 @@
     -  yum: name=python-pip
 
     - name: Remove urllib3
-    pip:
-      name: urllib3
-      state: absent
-    sudo: yes
+      pip:
+        name: urllib3
+        state: absent
 
     - name: Install AWSCLI
       pip: name=awscli
