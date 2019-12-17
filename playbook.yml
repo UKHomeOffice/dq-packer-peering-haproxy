@@ -63,11 +63,11 @@
     - name: Install AWSCLI
       pip: name=awscli
 
-    - name: upgrade all packages, excluding urllib
+    - name: upgrade all packages, excluding python-urllib
       yum:
         name: '*'
         state: latest
-        exclude: urllib*
+        exclude: python-urllib*
 
     - name: Get haproxy
       unarchive:
