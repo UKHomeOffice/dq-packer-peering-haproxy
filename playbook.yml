@@ -69,6 +69,12 @@
         state: latest
         exclude: python-urllib*
 
+    - name: Remove python-urllib
+      pip:
+        pkg: python-urllib*
+        state: absent
+
+
     - name: Get haproxy
       unarchive:
         src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
