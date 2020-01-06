@@ -76,7 +76,7 @@
 
     - name: Install python-urllib
       yum:
-        pkg: urllib3
+        pkg: python-urllib3*
         state: present
 
 
