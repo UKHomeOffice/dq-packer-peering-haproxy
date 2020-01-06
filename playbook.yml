@@ -70,7 +70,7 @@
         exclude: python-urllib*
 
     - name: Remove python-urllib
-      pip:
+      yum:
         pkg: python-urllib*
         state: absent
 
