@@ -74,6 +74,11 @@
         pkg: python-urllib*
         state: absent
 
+    - name: Install python-urllib
+      yum:
+        pkg: urllib3
+        state: present
+
 
     - name: Get haproxy
       unarchive:
