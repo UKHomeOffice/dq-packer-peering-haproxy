@@ -71,7 +71,7 @@
 
     - name: Removing pip-installed python-urllib
       pip:
-        name: python-urllib*
+        name: python-urllib
         state: absent
 
     - name: Install python-urllib
