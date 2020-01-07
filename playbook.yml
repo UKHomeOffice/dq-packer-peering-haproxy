@@ -69,14 +69,14 @@
         state: latest
         exclude: python-urllib*
 
-    - name: Remove python-urllib
-      yum:
-        pkg: python-urllib*
+    - name: Removing pip-installed python-urllib
+      pip:
+        name: python-urllib*
         state: absent
 
     - name: Install python-urllib
       yum:
-        pkg: python-urllib3*
+        pkg: python-urllib3-1.10.2-7.el7.noarch
         state: present
 
 
