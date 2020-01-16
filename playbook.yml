@@ -60,11 +60,11 @@
     - yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
     -  yum: name=python-pip
 
-- name: Update all libraries
-  yum: name=* state=latest
+    - name: Update all libraries
+      yum: name=* state=latest
 
-- name: Install AWSCLI
-  pip: name=awscli
+    - name: Install AWSCLI
+      pip: name=awscli
 
     - name: Get haproxy
       unarchive:
@@ -195,7 +195,6 @@
           log_group_name = /HAPROXY/syslog
           log_stream_name = {instance_id}
           datetime_format = %Y-%m-%d %H:%M:%S,%f
-
     - name: Install cloudwatch log agent
       environment:
         LC_ALL: C
@@ -222,7 +221,6 @@
         path: /etc/sysconfig/network
         block: |
           RES_OPTIONS="rotate timeout:1 attempts:1"
-
     - name: Secure sshd_config
       lineinfile: dest=/etc/ssh/sshd_config
                   regexp="^PermitRootLogin"
