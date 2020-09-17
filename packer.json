@@ -12,11 +12,11 @@
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
-          "name": "RHEL-7.5_HVM_GA-20180322-x86_64-1-Hourly2-GP2",
+          "name": "CentOS Linux 7 x86_64 HVM EBS ENA 1901_01-b7ee8a69-ee97-4a49-9e68-afaee216db2e*",
           "root-device-type": "ebs"
         },
         "owners": [
-          "309956199498"
+          "679593333241"
         ],
         "most_recent": true
       },
