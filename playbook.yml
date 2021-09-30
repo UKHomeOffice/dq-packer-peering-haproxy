@@ -63,8 +63,18 @@
     - name: Update all libraries
       yum: name=* state=latest
 
-    - name: Install AWSCLI
-      pip: name=awscli
+    - name: Upgrade to latest Pip3
+      pip:
+        name: pip
+        state: latest
+        executable: /usr/local/bin/pip3
+      become: true
+
+    - name: Pip Install AWSCLI for python3
+      pip:
+        name: AWSCLI
+        executable: /usr/local/bin/pip3
+      become: true
 
     - name: Get haproxy
       unarchive:
