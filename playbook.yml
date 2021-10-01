@@ -63,14 +63,11 @@
     - name: Update all libraries
       yum: name=* state=latest
 
-    - name: Install Unzip
-      raw: yum install -y unzip
+    - name: Install python3 for cert-expiry-script to run
+      raw: yum install -y python36 && yum install -y python36-devel && yum install -y python36-setuptools && easy_install-3.6 pip
 
-    - name: Download AWSCLLI
-      raw: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-
-    - name: Install AWSCLLI
-      raw: unzip awscliv2.zip && ./aws/install
+    - name: Install boto3 for cert-expiry-script to run
+      raw: pip3 install boto3
 
     - name: Get haproxy
       unarchive:
@@ -142,7 +139,7 @@
       cron:
         minute: "*"
         hour: "*"
-        job: /home/centos/gets3content.sh
+        job: source /home/centos/env_vars python3 /home/centos/gets3content.py
 
     - name: Download cloudwatch logs agent
       get_url:
