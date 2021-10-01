@@ -130,7 +130,7 @@
 
 
     - name: Transfer the script
-      copy: src=templates/gets3content.sh dest=/home/centos mode=0777
+      copy: src=templates/gets3content.py dest=/home/centos mode=0777
 
     - name: Test haproxy is running and listening
       shell: echo test >/dev/tcp/localhost/23
