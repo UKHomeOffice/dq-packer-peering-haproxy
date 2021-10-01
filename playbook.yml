@@ -139,7 +139,7 @@
       cron:
         minute: "*"
         hour: "*"
-        job: source /home/centos/env_vars python3 /home/centos/gets3content.py
+        job: source /home/centos/env_vars && python3 /home/centos/gets3content.py
 
     - name: Download cloudwatch logs agent
       get_url:
