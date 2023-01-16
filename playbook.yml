@@ -5,7 +5,7 @@
   gather_facts: false
   become: yes
   pre_tasks:
-    - raw: test -e /usr/bin/python || ( yum -y update && yum install -y python-minimal )
+    - test -e /usr/bin/python || ( dnf clean packages && dnf install -y python39 && ln -s -f /usr/bin/python3.9 /usr/bin/python)
 
 - name: Install and configure rsyslog service
   hosts: all
@@ -27,6 +27,8 @@
         owner: root
         group: root
         mode: 0644
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - file:
         path: /etc/rsyslog.d/
@@ -34,6 +36,8 @@
         group: root
         mode: 0644
         state: directory
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Create 49-haproxy.conf configuration file
       copy:
@@ -42,32 +46,30 @@
         owner: root
         group: root
         mode: 0644
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - service:
         name: rsyslog
         enabled: yes
         state: restarted
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
 - name: Transfer and execute HAProxy install script.
   hosts: all
   become: yes
   tasks:
-    - yum: name=gcc
-    - yum: name=pcre-devel
-    - yum: name=openssl-devel
-    - yum: name=zlib-devel
-    - yum: name=wget
-    - yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
-    -  yum: name=python-pip
+    - dnf: name=gcc
+    - dnf: name=pcre-devel
+    - dnf: name=openssl-devel
+    - dnf: name=zlib-devel
+    - dnf: name=wget
+    - dnf: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
+    - dnf: name=python-pip
 
     - name: Update all libraries
-      yum: name=* state=latest
-
-    - name: Install python3 for cert-expiry-script to run
-      raw: yum install -y python36 && yum install -y python36-devel && yum install -y python36-setuptools && easy_install-3.6 pip
-
-    - name: Install boto3 for cert-expiry-script to run
-      raw: pip3 install boto3
+      shell: dnf update -y
 
     - name: Get haproxy
       unarchive:
@@ -75,6 +77,8 @@
         dest: /usr/src/
         creates: /usr/src/haproxy-1.7.9
         remote_src: yes
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Make haproxy
       make:
@@ -85,67 +89,95 @@
           USE_OPENSSL: 1
           USE_ZLIB: 1
           USE_LIBCRYPT: 1
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Install haproxy
       make:
         chdir: /usr/src/haproxy-1.7.9
         target: install
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - copy:
         remote_src: yes
         src: /usr/src/haproxy-1.7.9/examples/haproxy.init
         dest: /etc/init.d/haproxy
         mode: 0755
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - file:
         src: /usr/local/sbin/haproxy
         dest: /usr/sbin/haproxy
         state: link
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - file:
         path: /etc/haproxy
         state: directory
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - copy:
         src: templates/haproxy.cfg
         dest: /etc/haproxy/haproxy.cfg
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - file:
         path: /var/lib/haproxy
         state: directory
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - file:
         path: /var/lib/haproxy/stats
         state: touch
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - systemd: daemon_reload=yes
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - user:
         name: haproxy
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - service:
         name: haproxy
         enabled: yes
         state: started
-
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Transfer the script
       copy: src=templates/gets3content.py dest=/home/centos mode=0777
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Test haproxy is running and listening
       shell: echo test >/dev/tcp/localhost/23
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Copy HAProxy config from S3
       cron:
         minute: "*"
         hour: "*"
         job: source /home/centos/env_vars && python3 /home/centos/gets3content.py
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Download cloudwatch logs agent
-      get_url:
-        url: https://s3.amazonaws.com//aws-cloudwatch/downloads/latest/awslogs-agent-setup.py
-        dest: /tmp/awslogs-agent-setup.py
-        mode: "+x"
+      shell: |
+         /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
+         chmod u+x /tmp/awslogs-agent-setup.py
+      vars:
+         ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Cloudwatch logs config
       copy:
@@ -202,9 +234,11 @@
     - name: Install cloudwatch log agent
       environment:
         LC_ALL: C
-      shell: /tmp/awslogs-agent-setup.py --region eu-west-2 --non-interactive -c /tmp/cwlogs.conf
+      shell: ln -s -f /usr/bin/python3.9 /usr/bin/python && /tmp/awslogs-agent-setup.py --region eu-west-2 --non-interactive -c /tmp/cwlogs.conf
       args:
         creates: /var/awslogs/etc/aws.conf
+      vars:
+        ansible_python_interpreter: /usr/libexec/platform-python
 
     - name: Copy cloudwatch logs starter
       copy:
@@ -213,12 +247,16 @@
         owner: root
         group: root
         mode: 0755
+      vars:
+        ansible_python_interpreter: /usr/libexec/platform-python
 
     - name: Make Cron Job to start awslogs with right region
       cron:
         name: Start awslogs
         special_time: reboot
         job: /usr/bin/startcloudwatchlogs.sh
+      vars:
+        ansible_python_interpreter: /usr/libexec/platform-python
 
     - name: Download cloudwatch agent (for ec2 alarms)
       get_url:
@@ -227,9 +265,11 @@
         mode: "+x"
 
     - name: Install cloudwatch agent (for ec2 alarms)
-      yum:
+      dnf:
         name: /tmp/amazon-cloudwatch-agent.rpm
         state: present
+       vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Cloudwatch Agent config
       copy:
@@ -288,12 +328,17 @@
                                   }
                           }
                   }
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Set DNS Resolver Options
       blockinfile:
         path: /etc/sysconfig/network
         block: |
           RES_OPTIONS="rotate timeout:1 attempts:1"
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
+
     - name: Secure sshd_config
       lineinfile: dest=/etc/ssh/sshd_config
                   regexp="^PermitRootLogin"
@@ -307,3 +352,5 @@
                   regexp="^X11Forwarding"
                   line="X11Forwarding no"
                   state=present
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
