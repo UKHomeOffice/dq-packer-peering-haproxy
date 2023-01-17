@@ -13,6 +13,7 @@
   vars:
     rsyslog_repeated_msg_reduction: "on"
 
+
   tasks:
     - name: Set timezone to Europe/London
       timezone:
