@@ -1,6 +1,6 @@
 ---
 global-variables:
-  vault-image: &vault-image  docker.digital.homeoffice.gov.uk/dq/dq-vault-awscli:1.43
+  vault-image: &vault-image docker.digital.homeoffice.gov.uk/dq/dq-vault-awscli:1.43
   packer-image: &packer-image quay.io/ukhomeofficedigital/dq-packer-ansible
   copy-image: &copy-image quay.io/ukhomeofficedigital/dq-packer-encrypt-copy
 
@@ -47,7 +47,7 @@ steps:
   pull: if-not-exists
   image: *vault-image
   commands:
-    *retrieve-deployment-aws-key
+    - echo "testing.." && set -xv && export VAULT_ADDR=$${VAULT_ADDR_SIT} 
   environment:
     VAULT_ADDR:
       from_secret: VAULT_ADDR_SIT
@@ -63,7 +63,6 @@ steps:
   commands:
   - source ./set_aws_secrets.sh
   - export HOME=/home/packer
-  - export DRONE_BUILD_NUMBER=$${DRONE_BUILD_NUMBER}
   - packer build packer.json
   when:
     event:
@@ -84,7 +83,7 @@ steps:
       - push
 
 - name: packer-copy-notprod
-  pull: if-not-exists
+  pull: always
   image: *copy-image
   commands:
   - source ./set_aws_secrets.sh
@@ -114,10 +113,9 @@ steps:
     - push
 
 - name: packer-copy-prod
-  pull: if-not-exists
+  pull: always
   image: *copy-image
   commands:
-  - source ./set_aws_secrets.sh
   - export filters="--owner 093401982388 --filters "Name=name,Values=dq-peering-haproxy*""
   - export region=eu-west-2
   - export HOME=/home/packer
