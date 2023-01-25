@@ -47,7 +47,7 @@ steps:
   pull: if-not-exists
   image: *vault-image
   commands:
-    echo "testing.." 
+    set -xv && export VAULT_ADDR=$${VAULT_ADDR_SIT} 
   environment:
     VAULT_ADDR:
       from_secret: VAULT_ADDR_SIT
