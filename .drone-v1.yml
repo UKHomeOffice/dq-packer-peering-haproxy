@@ -47,7 +47,7 @@ steps:
   pull: if-not-exists
   image: *vault-image
   commands:
-    *retrieve-deployment-aws-key
+    - echo "test"
   environment:
     VAULT_ADDR:
       from_secret: VAULT_ADDR_SIT
@@ -61,7 +61,7 @@ steps:
   pull: if-not-exists
   image: *packer-image
   commands:
-  - source ./set_aws_secrets.sh
+  - echo "test"
   - export HOME=/home/packer
   - packer build packer.json
   when:
@@ -72,7 +72,7 @@ steps:
   pull: if-not-exists
   image: *vault-image
   commands:
-    *retrieve-deployment-aws-key
+  - echo "test"
   environment:
     VAULT_ADDR:
       from_secret: VAULT_ADDR_NOTPROD
@@ -86,12 +86,7 @@ steps:
   pull: always
   image: *copy-image
   commands:
-  - source ./set_aws_secrets.sh
-  - export filters="--owner 093401982388 --filters "Name=name,Values=dq-peering-haproxy*""
-  - export region=eu-west-2
-  - export HOME=/home/packer
-  - cd /home/packer
-  - ./build.sh
+  - echo "test"
   when:
     event:
     - push
@@ -100,7 +95,7 @@ steps:
   pull: if-not-exists
   image: *vault-image
   commands:
-    *retrieve-deployment-aws-key
+    - echo "test"
   environment:
     VAULT_ADDR:
       from_secret: VAULT_ADDR_PROD
