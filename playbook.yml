@@ -269,7 +269,7 @@
       dnf:
         name: /tmp/amazon-cloudwatch-agent.rpm
         state: present
-       vars:
+      vars:
         ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Cloudwatch Agent config
