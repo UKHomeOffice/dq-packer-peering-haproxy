@@ -5,7 +5,7 @@
   gather_facts: false
   become: yes
   pre_tasks:
-    - test -e /usr/bin/python || ( dnf clean packages && dnf install -y python39 && ln -s -f /usr/bin/python3.9 /usr/bin/python)
+    - test -e /usr/bin/python || ( dnf install -y python39 && ln -s -f /usr/bin/python3.9 /usr/bin/python)
 
 - name: Install and configure rsyslog service
   hosts: all
