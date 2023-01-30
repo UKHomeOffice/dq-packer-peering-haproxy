@@ -19,7 +19,7 @@
       timezone:
         name: Europe/London
 
-    - yum: name=rsyslog
+    - dnf: name=rsyslog
 
     - name: Create rsyslog.conf configuration file
       copy:
