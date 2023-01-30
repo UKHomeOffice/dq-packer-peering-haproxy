@@ -20,6 +20,8 @@
         name: Europe/London
 
     - dnf: name=rsyslog
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Create rsyslog.conf configuration file
       copy:
