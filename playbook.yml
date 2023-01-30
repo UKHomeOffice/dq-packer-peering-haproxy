@@ -73,6 +73,13 @@
       vars:
         ansible_python_interpreter: "/usr/libexec/platform-python"
 
+    - name: Install make
+      dnf:
+       name: make
+       state: present
+      vars:
+        ansible_python_interpreter: "/usr/libexec/platform-python"
+
     - name: Make haproxy
       make:
         chdir: /usr/src/haproxy-1.7.9
