@@ -78,7 +78,7 @@
        name: make
        state: present
       vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
+        ansible_python_interpreter: "/bin/python3.9"
 
     - name: Make haproxy
       make:
@@ -90,7 +90,7 @@
           USE_ZLIB: 1
           USE_LIBCRYPT: 1
       vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
+        ansible_python_interpreter: "/bin/python3.9"
 
     - name: Install haproxy
       make:
