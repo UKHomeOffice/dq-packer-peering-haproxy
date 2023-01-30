@@ -24,10 +24,6 @@
          sed -i 's/REGION/eu-west-2/' /etc/yum.repos.d/redhat-rhui*.repo
       become: true
 
-    - dnf: name=rsyslog
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
-
     - name: Create rsyslog.conf configuration file
       copy:
         src: templates/rsyslog.conf
