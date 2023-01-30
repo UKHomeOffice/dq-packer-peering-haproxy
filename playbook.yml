@@ -64,14 +64,6 @@
   hosts: all
   become: yes
   tasks:
-    - dnf: name=gcc
-    - dnf: name=pcre-devel
-    - dnf: name=openssl-devel
-    - dnf: name=zlib-devel
-    - dnf: name=wget
-    - dnf: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
-    - dnf: name=python-pip
-
     - name: Get haproxy
       unarchive:
         src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
