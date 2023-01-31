@@ -63,6 +63,7 @@ steps:
   commands:
   - source ./set_aws_secrets.sh
   - export HOME=/home/packer
+  - export DRONE_BUILD_NUMBER=$${DRONE_BUILD_NUMBER}
   - packer build packer.json
   when:
     event:
@@ -83,7 +84,7 @@ steps:
       - push
 
 - name: packer-copy-notprod
-  pull: always
+  pull: if-not-exists
   image: *copy-image
   commands:
   - source ./set_aws_secrets.sh
@@ -113,9 +114,10 @@ steps:
     - push
 
 - name: packer-copy-prod
-  pull: always
+  pull: if-not-exists
   image: *copy-image
   commands:
+  - source ./set_aws_secrets.sh
   - export filters="--owner 093401982388 --filters "Name=name,Values=dq-peering-haproxy*""
   - export region=eu-west-2
   - export HOME=/home/packer
