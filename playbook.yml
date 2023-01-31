@@ -64,6 +64,14 @@
   hosts: all
   become: yes
   tasks:
+    - name: get AWS_ACCESS_KEY
+      local_action: shell echo ${AWS_ACCESS_KEY_ID}
+      register: mykey
+
+    - name: get AWS_SECRET_KEY
+      local_action: shell echo ${AWS_SECRET_ACCESS_KEY}
+      register: mysecret
+
     - name: Get haproxy
       unarchive:
         src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
