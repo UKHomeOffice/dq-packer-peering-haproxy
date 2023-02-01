@@ -30,12 +30,24 @@
   ],
   "provisioners": [
     {
+            "type": "shell",
+            "inline": [
+                "sleep 30",
+                "echo \"export user_access_key=\"{{user `access_key`}}\"\" > ~/passwordExport",
+                "echo \"export user_secret_key=\"{{user `secret_key`}}\"\" > ~/passwordExport"
+            ]
+    },
+    {
       "type": "ansible",
       "sftp_command": "/usr/libexec/openssh/sftp-server",
+      "command": "source ~/passwordExport && ansible-playbook",
       "playbook_file": "./playbook.yml",
+      "playbook_dir": ".",
       "extra_arguments": [
-        "--extra-vars", "'ansible_python_interpreter: /usr/libexec/platform-python' ansible_shell_type=sh access_key secret_key"
-      ]
+                "--extra-vars", "'ansible_python_interpreter: /usr/libexec/platform-python' ansible_shell_type=sh",
+                "--access_key=ansible-access-password.py",
+                "--secret_key=ansible-secret-password.py"
+            ] 
     }
   ]
 }
