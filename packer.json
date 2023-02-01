@@ -1,7 +1,7 @@
 {
   "variables": {
     "access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
-    "secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}"
+    "secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "sensitive" : "true"
   },
   "sensitive-variables": ["user_access_key", "secret_access_key"],
