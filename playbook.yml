@@ -63,10 +63,6 @@
   hosts: all
   become: yes
   tasks:
-    - name: get AWS_ACCESS_KEY
-      shell: |
-          echo ${AWS_ACCESS_KEY_ID}
-
     - name: Get haproxy
       unarchive:
         src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
