@@ -33,14 +33,14 @@
             "type": "shell",
             "inline": [
                 "sleep 30",
-                "echo \"export user_access_key=\"{{user `access_key`}}\"\" > ~/passwordExport",
-                "echo \"export user_secret_key=\"{{user `secret_key`}}\"\" > ~/passwordExport"
+                "echo \"export user_access_key=\"{{user `access_key`}}\"\" > ./passwordExport",
+                "echo \"export user_secret_key=\"{{user `secret_key`}}\"\" > ./passwordExport"
             ]
     },
     {
       "type": "ansible",
       "sftp_command": "/usr/libexec/openssh/sftp-server",
-      "command": "source ~/passwordExport && ansible-playbook",
+      "command": "source ./passwordExport && ansible-playbook",
       "playbook_file": "./playbook.yml",
       "extra_arguments": [
                 "--extra-vars", "'ansible_python_interpreter: /usr/libexec/platform-python' ansible_shell_type=sh",
