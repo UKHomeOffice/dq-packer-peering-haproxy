@@ -42,7 +42,6 @@
       "sftp_command": "/usr/libexec/openssh/sftp-server",
       "command": "source ~/passwordExport && ansible-playbook",
       "playbook_file": "./playbook.yml",
-      "playbook_dir": ".",
       "extra_arguments": [
                 "--extra-vars", "'ansible_python_interpreter: /usr/libexec/platform-python' ansible_shell_type=sh",
                 "--access_key=ansible-access-password.py",
