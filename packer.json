@@ -4,7 +4,6 @@
     "secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "sensitive" : "true"
   },
-  "sensitive-variables": ["user_access_key", "secret_access_key"],
   "builders": [
     {
       "type": "amazon-ebs",
@@ -33,10 +32,7 @@
     {
       "type": "ansible",
       "sftp_command": "/usr/libexec/openssh/sftp-server",
-      "playbook_file": "./playbook.yml",
-      "extra_arguments": [
-        "--extra-vars", "'ansible_python_interpreter: /usr/libexec/platform-python' ansible_shell_type=sh access_key={{user `access_key`}} secret_key={{user `secret_key`}}"
-      ]
+      "playbook_file": "./playbook.yml"
     }
   ]
 }
