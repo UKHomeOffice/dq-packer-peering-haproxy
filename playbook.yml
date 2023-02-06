@@ -151,7 +151,7 @@
         ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Transfer the script
-      copy: src=templates/gets3content.py dest=/home/centos mode=0777
+      copy: src=templates/gets3content.py dest=/home/ec2-user mode=0777
       vars:
         ansible_python_interpreter: "/usr/libexec/platform-python"
 
@@ -164,7 +164,7 @@
       cron:
         minute: "*"
         hour: "*"
-        job: source /home/centos/env_vars && python3 /home/centos/gets3content.py
+        job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
       vars:
         ansible_python_interpreter: "/usr/libexec/platform-python"
 
@@ -258,7 +258,7 @@
 
     - name: Download cloudwatch agent (for ec2 alarms)
       get_url:
-        url: https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm
+        url: https://s3.amazonaws.com/amazoncloudwatch-agent/ec2-user/amd64/latest/amazon-cloudwatch-agent.rpm
         dest: /tmp/amazon-cloudwatch-agent.rpm
         mode: "+x"
       vars:
@@ -278,7 +278,7 @@
                   {
                   "agent": {
                           "metrics_collection_interval": 60,
-                          "run_as_user": "centos"
+                          "run_as_user": "ec2-user"
                   },
                   "metrics": {
                           "namespace": "CWAgent",
