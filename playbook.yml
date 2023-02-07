@@ -341,7 +341,11 @@
 
     - name: install selinux bindings
       shell: |
-         ln -s -f /usr/bin/python3.9 /usr/bin/python && pip3 install selinux 
+         ln -s -f /usr/bin/python3.9 /usr/bin/python && pip3 install selinux && pip3 install boto3
+         mkdir -p /etc/ssl/certs/self-signed-cert
+         openssl req -x509 -sha256 -days 3650 -nodes -newkey rsa:2048 -subj "/CN=*.gov.uk/C=UK/L=London” -keyout /tmp/rootCA.key -out /tmp/rootCA.crt
+         cat  /tmp/rootCA.crt /tmp/rootCA.key > /etc/ssl/certs/self-signed-cert/haproxy-cert.pem
+      become: true
       vars:
          ansible_python_interpreter: "/usr/libexec/platform-python" 
 
@@ -360,14 +364,3 @@
                   state=present
       vars:
         ansible_python_interpreter: "/usr/libexec/platform-python"
-
-    - name: install boto3 and self-signed cert for haproxy
-      shell: |
-         ln -s -f /usr/bin/python3.9 /usr/bin/python && pip3 install boto3
-         mkdir -p /etc/ssl/certs/self-signed-cert
-         openssl req -x509 -sha256 -days 3650 -nodes -newkey rsa:2048 -subj "/CN=*.gov.uk/C=UK/L=London” -keyout rootCA.key -out rootCA.crt 
-         cat rootCA.crt rootCA.key > /etc/ssl/certs/self-signed-cert/haproxy_cert.pem
-         touch /etc/ssl/certs/make-dummy-cert
-         rm -Rf /etc/ssl/certs/self-signed-cert/rootCA*
-      vars:
-         ansible_python_interpreter: "/usr/libexec/platform-python" 
