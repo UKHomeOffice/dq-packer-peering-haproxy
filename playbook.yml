@@ -350,6 +350,7 @@
          mkdir -p /etc/ssl/certs/self-signed-cert
          openssl req -x509 -sha256 -days 3650 -nodes -newkey rsa:2048 -subj "/CN=*.gov.uk/C=UK/L=London" -keyout /tmp/rootCA.key -out /tmp/rootCA.crt
          cat  /tmp/rootCA.crt /tmp/rootCA.key > /etc/ssl/certs/self-signed-cert/haproxy-cert.pem
+         rm -Rf /tmp/rootCA.*
       become: true
       vars:
          ansible_python_interpreter: "/usr/libexec/platform-python"
