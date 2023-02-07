@@ -339,15 +339,20 @@
       vars:
         ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - name: install selinux bindings
+    - name: install selinux bindings and boto3
       shell: |
          ln -s -f /usr/bin/python3.9 /usr/bin/python && pip3 install selinux && pip3 install boto3
-         mkdir -p /etc/ssl/certs/self-signed-cert
-         openssl req -x509 -sha256 -days3650 -nodes -newkey rsa:2048 -subj "/CN=*.gov.uk/C=UK/L=London" -keyout /tmp/rootCA.key -out /tmp/rootCA.crt
-         cat  /tmp/rootCA.crt /tmp/rootCA.key > /etc/ssl/certs/self-signed-cert/haproxy-cert.pem
-      become: true 
       vars:
          ansible_python_interpreter: "/usr/libexec/platform-python" 
+
+    - name: Configure SSL for HAProxy
+      shell: |
+         mkdir -p /etc/ssl/certs/self-signed-cert
+         openssl req -x509 -sha256 -days 3650 -nodes -newkey rsa:2048 -subj "/CN=*.gov.uk/C=UK/L=London" -keyout /tmp/rootCA.key -out /tmp/rootCA.crt
+         cat  /tmp/rootCA.crt /tmp/rootCA.key > /etc/ssl/certs/self-signed-cert/haproxy-cert.pem
+      become: true
+      vars:
+         ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Secure sshd_config
       lineinfile: dest=/etc/ssh/sshd_config
