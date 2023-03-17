@@ -21,7 +21,7 @@
           "delete_on_termination": true
         }
       ],
-      "instance_type": "t3.micro",
+      "instance_type": "t3.medium",
       "ssh_username": "ec2-user",
       "ami_name": "dq-peering-haproxy {{user `drone_build_number`}}",
       "ami_users": [
