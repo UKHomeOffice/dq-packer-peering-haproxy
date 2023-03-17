@@ -256,15 +256,12 @@
         url: https://s3.amazonaws.com/amazoncloudwatch-agent/redhat/amd64/latest/amazon-cloudwatch-agent.rpm
         dest: /tmp/amazon-cloudwatch-agent.rpm
         mode: "+x"
-      vars:
-        ansible_python_interpreter: /usr/libexec/platform-python
 
     - name: Install cloudwatch agent (for ec2 alarms)
       dnf:
         name: /tmp/amazon-cloudwatch-agent.rpm
         state: present
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
+        validate_certs: false
 
     - name: Cloudwatch Agent config
       copy:
@@ -323,8 +320,6 @@
                                   }
                           }
                   }
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Set DNS Resolver Options
       blockinfile:
