@@ -152,21 +152,16 @@
 
     - name: Transfer the script
       copy: src=templates/gets3content.py dest=/home/ec2-user mode=0777
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Test haproxy is running and listening
       shell: echo test >/dev/tcp/localhost/23
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - name: Copy HAProxy config from S3
+    - name: CRON to copy HAProxy config from S3
       cron:
+        name: "copy HAProxy config from S3"
         minute: "*"
         hour: "*"
         job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Download cloudwatch logs agent
       shell: |
