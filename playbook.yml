@@ -31,7 +31,8 @@
         group: root
         mode: 0644
 
-    - file:
+    - name: Create /etc/rsyslog.d/ directory
+      file:
         path: /etc/rsyslog.d/
         owner: root
         group: root
@@ -46,7 +47,8 @@
         group: root
         mode: 0644
 
-    - service:
+    - name: Restart rsyslog service
+      service:
         name: rsyslog
         enabled: yes
         state: restarted
@@ -83,39 +85,48 @@
         chdir: /usr/src/haproxy-1.7.9
         target: install
 
-    - copy:
+    - name: Copy haproxy.init
+      copy:
         remote_src: yes
         src: /usr/src/haproxy-1.7.9/examples/haproxy.init
         dest: /etc/init.d/haproxy
         mode: 0755
 
-    - file:
+    - name: Create haproxy link
+      file:
         src: /usr/local/sbin/haproxy
         dest: /usr/sbin/haproxy
         state: link
 
-    - file:
+    - name: Create /etc/haproxy directory
+      file:
         path: /etc/haproxy
         state: directory
 
-    - copy:
+    - name: Copy haproxy.cfg
+      copy:
         src: templates/haproxy.cfg
         dest: /etc/haproxy/haproxy.cfg
 
-    - file:
+    - name: Create /var/lib/haproxy directory
+      file:
         path: /var/lib/haproxy
         state: directory
 
-    - file:
+    - name: Create /var/lib/haproxy/stats file
+      file:
         path: /var/lib/haproxy/stats
         state: touch
 
-    - systemd: daemon_reload=yes
+    - name: systemd daemon reload
+      systemd: daemon_reload=yes
 
-    - user:
+    - name: Create User haproxy
+      user:
         name: haproxy
 
-    - service:
+    - name: Start haproxy service
+      service:
         name: haproxy
         enabled: yes
         state: started
@@ -300,15 +311,22 @@
       become: true
 
     - name: Secure sshd_config
-      lineinfile: dest=/etc/ssh/sshd_config
-                  regexp="^PermitRootLogin"
-                  line="PermitRootLogin no"
-                  state=present
-    - lineinfile: dest=/etc/ssh/sshd_config
-                  regexp="^PasswordAuthentication"
-                  line="PasswordAuthentication no"
-                  state=present
-    - lineinfile: dest=/etc/ssh/sshd_config
-                  regexp="^X11Forwarding"
-                  line="X11Forwarding no"
-                  state=present
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+        state: present
+
+    - name: sshd_config - PasswordAuthentication no
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^PasswordAuthentication"
+        line: "PasswordAuthentication no"
+        state: present
+
+    - name: sshd_config - X11Forwarding no
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^X11Forwarding"
+        line: "X11Forwarding no"
+        state: present
