@@ -261,7 +261,7 @@
       dnf:
         name: /tmp/amazon-cloudwatch-agent.rpm
         state: present
-        validate_certs: false
+      disable_gpg_check: true
 
     - name: Cloudwatch Agent config
       copy:
