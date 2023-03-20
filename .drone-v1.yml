@@ -1,7 +1,7 @@
 ---
 global-variables:
   vault-image: &vault-image  docker.digital.homeoffice.gov.uk/dq/dq-vault-awscli:1.43
-  packer-image: &packer-image quay.io/ukhomeofficedigital/dq-packer-ansible:latest
+  packer-image: &packer-image quay.io/ukhomeofficedigital/dq-packer-ansible:b65
   copy-image: &copy-image quay.io/ukhomeofficedigital/dq-packer-encrypt-copy:latest
 
 kind: pipeline
