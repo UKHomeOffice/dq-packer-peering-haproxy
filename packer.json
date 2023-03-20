@@ -3,15 +3,16 @@
     "access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "sensitive" : "true",
+    "region":  "{{env `AWS_DEFAULT_REGION`}}",
     "drone_build_number": "{{env `DRONE_BUILD_NUMBER`}}"
   },
-  "sensitive-variables": ["user_access_key", "secret_access_key"],
+  "sensitive-variables": ["access_key", "secret_key"],
   "builders": [
     {
       "type": "amazon-ebs",
       "access_key": "{{user `access_key`}}",
       "secret_key": "{{user `secret_key`}}",
-      "region": "eu-west-2",
+      "region": "{{user `region`}}",
       "source_ami": "ami-04097396cd89b141d",
       "launch_block_device_mappings": [
         {
