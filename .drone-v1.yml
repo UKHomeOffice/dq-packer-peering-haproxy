@@ -1,7 +1,7 @@
 ---
 global-variables:
   vault-image: &vault-image  docker.digital.homeoffice.gov.uk/dq/dq-vault-awscli:1.43
-  packer-image: &packer-image quay.io/ukhomeofficedigital/dq-packer-ansible:dev-33
+  packer-image: &packer-image quay.io/ukhomeofficedigital/dq-packer-ansible
   copy-image: &copy-image quay.io/ukhomeofficedigital/dq-packer-encrypt-copy:latest
 
 kind: pipeline
@@ -31,7 +31,6 @@ x-anchors:
 
 steps:
 - name: validate
-  pull: if-not-exists
   image: *packer-image
   commands:
   - export HOME=/home/packer
@@ -45,7 +44,6 @@ steps:
   - packer inspect packer.json
 
 - name: retrieve_aws_secrets_ci
-  pull: if-not-exists
   image: *vault-image
   commands:
     *retrieve-deployment-aws-key
@@ -85,7 +83,6 @@ steps:
       - push
 
 - name: packer-copy-notprod
-  pull: if-not-exists
   image: *copy-image
   commands:
   - source ./set_aws_secrets.sh
