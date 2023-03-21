@@ -53,17 +53,17 @@ steps:
     event:
       - push
 
-#- name: build
-#  pull: if-not-exists
-#  image: *packer-image
-#  commands:
-#  - source ./set_aws_secrets.sh
-#  - export HOME=/home/packer
-#  - export DRONE_BUILD_NUMBER=$${DRONE_BUILD_NUMBER}
-#  - packer build packer.json
-#  when:
-#    event:
-#    - push
+- name: build
+  pull: if-not-exists
+  image: *packer-image
+  commands:
+  - source ./set_aws_secrets.sh
+  - export HOME=/home/packer
+  - export DRONE_BUILD_NUMBER=$${DRONE_BUILD_NUMBER}
+  - packer build packer.json
+  when:
+    event:
+    - push
 
 - name: retrieve_aws_secrets_np
   pull: if-not-exists
