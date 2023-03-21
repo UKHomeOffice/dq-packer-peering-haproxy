@@ -37,14 +37,16 @@ steps:
   image: *packer-image
   commands:
   - export HOME=/home/packer
-  - packer --version validate packer.json
+  - packer --version
+  - packer validate packer.json
 
 - name: inspect
   pull: if-not-exists
   image: *packer-image
   commands:
   - export HOME=/home/packer
-  - packer --version inspect packer.json
+  - packer --version
+  - packer inspect packer.json
 
 - name: retrieve_aws_secrets_ci
   pull: always
@@ -67,7 +69,8 @@ steps:
   - source ./set_aws_secrets.sh
   - export HOME=/home/packer
   - export DRONE_BUILD_NUMBER=$${DRONE_BUILD_NUMBER}
-  - packer --version build packer.json
+  - packer --version
+  - packer build packer.json
   when:
     event:
     - push
