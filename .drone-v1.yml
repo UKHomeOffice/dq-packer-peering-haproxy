@@ -31,27 +31,12 @@ x-anchors:
     - sleep 20
 
 steps:
-- name: pull packer
-  pull: always
-  image: *packer-image
-  command: version
-
-- name: pull vault
-  pull: always
-  image: *vault-image
-  command: version
-
-- name: pull encrypt-copy
-  pull: always
-  image: *copy-image
-  command: version
-
 - name: validate
   pull: always
   image: *packer-image
   commands:
   - export HOME=/home/packer
-  - packer validate packer.json
+  - packer --version validate packer.json
 
 - name: inspect
   pull: if-not-exists
