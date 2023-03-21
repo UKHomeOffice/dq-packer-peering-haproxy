@@ -75,6 +75,7 @@
         - make
         - gcc
         - pcre-devel
+        - openssl-devel
       become: true
 
     - name: Make haproxy
