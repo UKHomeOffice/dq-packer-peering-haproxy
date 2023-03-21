@@ -14,8 +14,8 @@ platform:
 
 x-anchors:
   retrieve-deployment-aws-key: &retrieve-deployment-aws-key
-    # Retrieve vault secrets
     - vault --version
+    # Retrieve vault secrets
     - vault read aws_dacc_dq/creds/drone > aws_creds.json
     - export LEASE_ID=$(cat aws_creds.json | grep lease_id | awk -F ' ' '{print $2}')
     # Update the token TTL to 10mins
@@ -137,8 +137,8 @@ steps:
   pull: if-not-exists
   image: *vault-image
   commands:
-    # Renew NotProd Drone Vault Token
     - vault --version
+    # Renew NotProd Drone Vault Token
     - export VAULT_TOKEN=$${VAULT_TOKEN_NOTPROD}
     - export VAULT_ADDR=$${VAULT_ADDR_NOTPROD}
     - vault token renew > /dev/null
