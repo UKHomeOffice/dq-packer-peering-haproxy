@@ -74,6 +74,7 @@
         # - "development-tools"
         - make
         - gcc
+        - pcre-devel
       become: true
 
     - name: Make haproxy
