@@ -64,12 +64,16 @@
         creates: /usr/src/haproxy-1.7.9
         remote_src: yes
 
-    - name: Install make
-      shell: |
-        /usr/bin/dnf install -y make
+#    - name: Install make
+#      shell: |
+#        /usr/bin/dnf install -y make
 
-    - name: Install Development Tools
-      dnf: development-tools
+    - name: DNF Install Dependencies
+      dnf: name={{ item }}
+      with_items:
+        - "development tools"
+        - make
+      become: true
 
     - name: Make haproxy
       make:
