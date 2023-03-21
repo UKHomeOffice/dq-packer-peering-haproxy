@@ -31,6 +31,18 @@ x-anchors:
     - sleep 20
 
 steps:
+- name: pull packer
+  pull: always
+  image: *packer-image
+
+- name: pull vault
+  pull: always
+  image: *vault-image
+
+- name: pull encrypt-copy
+  pull: always
+  image: *copy-image
+
 - name: validate
   pull: always
   image: *packer-image
