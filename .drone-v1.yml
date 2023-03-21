@@ -32,6 +32,7 @@ x-anchors:
 
 steps:
 - name: validate
+  pull: always
   image: *packer-image
   commands:
   - export HOME=/home/packer
@@ -45,6 +46,7 @@ steps:
   - packer inspect packer.json
 
 - name: retrieve_aws_secrets_ci
+  pull: always
   image: *vault-image
   commands:
     *retrieve-deployment-aws-key
@@ -84,6 +86,7 @@ steps:
       - push
 
 - name: packer-copy-notprod
+  pull: always
   image: *copy-image
   commands:
   - source ./set_aws_secrets.sh
