@@ -68,6 +68,9 @@
       shell: |
         /usr/bin/dnf install -y make
 
+    - name: Install Development Tools
+      dnf: development-tools
+
     - name: Make haproxy
       make:
         chdir: /usr/src/haproxy-1.7.9
