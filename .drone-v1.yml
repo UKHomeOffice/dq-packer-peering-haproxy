@@ -34,14 +34,17 @@ steps:
 - name: pull packer
   pull: always
   image: *packer-image
+  command: version
 
 - name: pull vault
   pull: always
   image: *vault-image
+  command: version
 
 - name: pull encrypt-copy
   pull: always
   image: *copy-image
+  command: version
 
 - name: validate
   pull: always
