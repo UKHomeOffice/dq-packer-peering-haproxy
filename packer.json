@@ -12,8 +12,15 @@
       "access_key": "{{user `access_key`}}",
       "secret_key": "{{user `secret_key`}}",
       "region": "{{user `region`}}",
-      "source_ami": "ami-04097396cd89b141d",
-      "launch_block_device_mappings": [
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "cloudimg-redhat8*"
+        },
+        "owners": [
+          "679593333241"
+        ],
+        "launch_block_device_mappings": [
         {
           "device_name": "/dev/sda1",
           "volume_size": 100,
