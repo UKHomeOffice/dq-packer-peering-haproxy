@@ -71,8 +71,9 @@
     - name: DNF Install Dependencies
       dnf: name={{ item }}
       with_items:
-        - "development-tools"
+        # - "development-tools"
         - make
+        - gcc
       become: true
 
     - name: Make haproxy
