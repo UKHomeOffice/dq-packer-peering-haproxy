@@ -2,7 +2,7 @@
 global-variables:
   vault-image: &vault-image  docker.digital.homeoffice.gov.uk/dq/dq-vault-awscli:1.43
   packer-image: &packer-image quay.io/ukhomeofficedigital/dq-packer-ansible:b72
-  copy-image: &copy-image quay.io/ukhomeofficedigital/dq-packer-encrypt-copy:dev-23
+  copy-image: &copy-image quay.io/ukhomeofficedigital/dq-packer-encrypt-copy:dev-24
 
 kind: pipeline
 name: default
@@ -56,17 +56,17 @@ steps:
     event:
       - push
 
-- name: build
-  pull: if-not-exists
-  image: *packer-image
-  commands:
-  - source ./set_aws_secrets.sh
-  - export HOME=/home/packer
-  - export DRONE_BUILD_NUMBER=$${DRONE_BUILD_NUMBER}
-  - packer build packer.json
-  when:
-    event:
-    - push
+#- name: build
+#  pull: if-not-exists
+#  image: *packer-image
+#  commands:
+#  - source ./set_aws_secrets.sh
+#  - export HOME=/home/packer
+#  - export DRONE_BUILD_NUMBER=$${DRONE_BUILD_NUMBER}
+#  - packer build packer.json
+#  when:
+#    event:
+#    - push
 
 - name: retrieve_aws_secrets_np
   pull: if-not-exists
