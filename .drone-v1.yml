@@ -15,6 +15,7 @@ platform:
 x-anchors:
   retrieve-deployment-aws-key: &retrieve-deployment-aws-key
     # Retrieve vault secrets
+    - vault --version
     - vault read aws_dacc_dq/creds/drone > aws_creds.json
     - export LEASE_ID=$(cat aws_creds.json | grep lease_id | awk -F ' ' '{print $2}')
     # Update the token TTL to 10mins
@@ -43,7 +44,7 @@ steps:
   image: *packer-image
   commands:
   - export HOME=/home/packer
-  - packer inspect packer.json
+  - packer --version inspect packer.json
 
 - name: retrieve_aws_secrets_ci
   pull: always
@@ -66,7 +67,7 @@ steps:
   - source ./set_aws_secrets.sh
   - export HOME=/home/packer
   - export DRONE_BUILD_NUMBER=$${DRONE_BUILD_NUMBER}
-  - packer build packer.json
+  - packer --version build packer.json
   when:
     event:
     - push
@@ -134,6 +135,7 @@ steps:
   image: *vault-image
   commands:
     # Renew NotProd Drone Vault Token
+    - vault --version
     - export VAULT_TOKEN=$${VAULT_TOKEN_NOTPROD}
     - export VAULT_ADDR=$${VAULT_ADDR_NOTPROD}
     - vault token renew > /dev/null
