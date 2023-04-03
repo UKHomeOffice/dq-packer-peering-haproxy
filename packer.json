@@ -45,7 +45,7 @@
       "sftp_command": "/usr/libexec/openssh/sftp-server",
       "playbook_file": "./playbook.yml",
       "extra_arguments": [
-        "--extra-vars", "'ansible_python_interpreter: /usr/libexec/platform-python' ansible_display_args_to_stdout=False ansible_shell_type=sh access_key={{user `access_key`}} secret_key={{user `secret_key`}}"
+        "--extra-vars", "'ansible_display_args_to_stdout: False' ansible_shell_type=sh access_key={{user `access_key`}} secret_key={{user `secret_key`}}"
         "--ssh-extra-args", "-o IdentitiesOnly=yes -o 'HostKeyAlgorithms=+ssh-rsa' -o 'PubkeyAcceptedAlgorithms=+ssh-rsa'",
         "--scp-extra-args", "'-O'"
       ]
