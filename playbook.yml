@@ -30,17 +30,14 @@
         owner: root
         group: root
         mode: 0644
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - file:
+    - name: Create /etc/rsyslog.d/ directory
+      file:
         path: /etc/rsyslog.d/
         owner: root
         group: root
         mode: 0644
         state: directory
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Create 49-haproxy.conf configuration file
       copy:
@@ -49,15 +46,12 @@
         owner: root
         group: root
         mode: 0644
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - service:
+    - name: Restart rsyslog service
+      service:
         name: rsyslog
         enabled: yes
         state: restarted
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
 - name: Transfer and execute HAProxy install script.
   hosts: all
@@ -69,12 +63,15 @@
         dest: /usr/src/
         creates: /usr/src/haproxy-1.7.9
         remote_src: yes
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - name: Install make
-      shell: |
-        /usr/bin/dnf install -y make
+    - name: DNF Install Dependencies
+      dnf: name={{ item }}
+      with_items:
+        - make
+        - gcc
+        - pcre-devel
+        - openssl-devel
+      become: true
 
     - name: Make haproxy
       make:
@@ -85,95 +82,75 @@
           USE_OPENSSL: 1
           USE_ZLIB: 1
           USE_LIBCRYPT: 1
-      vars:
-        ansible_python_interpreter: "/bin/python3.9"
 
     - name: Install haproxy
       make:
         chdir: /usr/src/haproxy-1.7.9
         target: install
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - copy:
+    - name: Copy haproxy.init
+      copy:
         remote_src: yes
         src: /usr/src/haproxy-1.7.9/examples/haproxy.init
         dest: /etc/init.d/haproxy
         mode: 0755
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - file:
+    - name: Create haproxy link
+      file:
         src: /usr/local/sbin/haproxy
         dest: /usr/sbin/haproxy
         state: link
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - file:
+    - name: Create /etc/haproxy directory
+      file:
         path: /etc/haproxy
         state: directory
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - copy:
+    - name: Copy haproxy.cfg
+      copy:
         src: templates/haproxy.cfg
         dest: /etc/haproxy/haproxy.cfg
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - file:
+    - name: Create /var/lib/haproxy directory
+      file:
         path: /var/lib/haproxy
         state: directory
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - file:
+    - name: Create /var/lib/haproxy/stats file
+      file:
         path: /var/lib/haproxy/stats
         state: touch
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - systemd: daemon_reload=yes
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
+    - name: systemd daemon reload
+      systemd: daemon_reload=yes
 
-    - user:
+    - name: Create User haproxy
+      user:
         name: haproxy
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - service:
+    - name: Start haproxy service
+      service:
         name: haproxy
         enabled: yes
         state: started
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Transfer the script
       copy: src=templates/gets3content.py dest=/home/ec2-user mode=0777
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Test haproxy is running and listening
       shell: echo test >/dev/tcp/localhost/23
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
-    - name: Copy HAProxy config from S3
+    - name: CRON to copy HAProxy config from S3
       cron:
+        name: "copy HAProxy config from S3"
         minute: "*"
         hour: "*"
         job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Download cloudwatch logs agent
       shell: |
          export AWS_ACCESS_KEY_ID="{{ access_key }}" && export AWS_SECRET_ACCESS_KEY="{{ secret_key }}" && /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
          chmod u+x /tmp/awslogs-agent-setup.py
-      vars:
-         ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Cloudwatch logs config
       copy:
@@ -226,8 +203,6 @@
           log_group_name = /HAPROXY/syslog
           log_stream_name = {instance_id}
           datetime_format = %Y-%m-%d %H:%M:%S,%f
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Install cloudwatch log agent
       environment:
@@ -235,8 +210,6 @@
       shell: ln -s -f /usr/bin/python3.9 /usr/bin/python && /tmp/awslogs-agent-setup.py --region eu-west-2 --non-interactive -c /tmp/cwlogs.conf
       args:
         creates: /var/awslogs/etc/aws.conf
-      vars:
-        ansible_python_interpreter: /usr/libexec/platform-python
 
     - name: Copy cloudwatch logs starter
       copy:
@@ -245,31 +218,24 @@
         owner: root
         group: root
         mode: 0755
-      vars:
-        ansible_python_interpreter: /usr/libexec/platform-python
 
     - name: Make Cron Job to start awslogs with right region
       cron:
         name: Start awslogs
         special_time: reboot
         job: /usr/bin/startcloudwatchlogs.sh
-      vars:
-        ansible_python_interpreter: /usr/libexec/platform-python
 
     - name: Download cloudwatch agent (for ec2 alarms)
       get_url:
         url: https://s3.amazonaws.com/amazoncloudwatch-agent/redhat/amd64/latest/amazon-cloudwatch-agent.rpm
         dest: /tmp/amazon-cloudwatch-agent.rpm
         mode: "+x"
-      vars:
-        ansible_python_interpreter: /usr/libexec/platform-python
 
     - name: Install cloudwatch agent (for ec2 alarms)
       dnf:
         name: /tmp/amazon-cloudwatch-agent.rpm
         state: present
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
+        disable_gpg_check: true
 
     - name: Cloudwatch Agent config
       copy:
@@ -328,22 +294,16 @@
                                   }
                           }
                   }
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Set DNS Resolver Options
       blockinfile:
         path: /etc/sysconfig/network
         block: |
           RES_OPTIONS="rotate timeout:1 attempts:1"
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: install selinux bindings and boto3
       shell: |
          ln -s -f /usr/bin/python3.9 /usr/bin/python && pip3 install selinux && pip3 install boto3
-      vars:
-         ansible_python_interpreter: "/usr/libexec/platform-python" 
 
     - name: Configure SSL for HAProxy
       shell: |
@@ -352,21 +312,24 @@
          cat  /tmp/rootCA.crt /tmp/rootCA.key > /etc/ssl/certs/self-signed-cert/haproxy-cert.pem
          rm -Rf /tmp/rootCA.*
       become: true
-      vars:
-         ansible_python_interpreter: "/usr/libexec/platform-python"
 
     - name: Secure sshd_config
-      lineinfile: dest=/etc/ssh/sshd_config
-                  regexp="^PermitRootLogin"
-                  line="PermitRootLogin no"
-                  state=present
-    - lineinfile: dest=/etc/ssh/sshd_config
-                  regexp="^PasswordAuthentication"
-                  line="PasswordAuthentication no"
-                  state=present
-    - lineinfile: dest=/etc/ssh/sshd_config
-                  regexp="^X11Forwarding"
-                  line="X11Forwarding no"
-                  state=present
-      vars:
-        ansible_python_interpreter: "/usr/libexec/platform-python"
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+        state: present
+
+    - name: sshd_config - PasswordAuthentication no
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^PasswordAuthentication"
+        line: "PasswordAuthentication no"
+        state: present
+
+    - name: sshd_config - X11Forwarding no
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^X11Forwarding"
+        line: "X11Forwarding no"
+        state: present
