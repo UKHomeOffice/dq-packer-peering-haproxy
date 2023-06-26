@@ -147,9 +147,9 @@
         hour: "*"
         job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
 
-    - name: Download cloudwatch logs agent
+    - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
-         export AWS_ACCESS_KEY_ID="{{ access_key }}" && export AWS_SECRET_ACCESS_KEY="{{ secret_key }}" && /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
+         /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
          chmod u+x /tmp/awslogs-agent-setup.py
 
     - name: Cloudwatch logs config
