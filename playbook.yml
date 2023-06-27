@@ -84,8 +84,20 @@
       shell: |
         /usr/local/bin/aws configure list
 
-    - name: GET CloudWatch logs config from DQ-config-bucket
+    - name: GET CloudWatch logs config from DQ-config-bucket - config
       command: /usr/local/bin/aws configure list --debug
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
+
+    - name: GET CloudWatch logs config from DQ-config-bucket - ls
+      command: /usr/local/bin/aws s3 ls s3://dq-config-bucket/
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
+
+    - name: GET CloudWatch logs config from DQ-config-bucket - cp
+      command: /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
       environment:
         AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
         AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
