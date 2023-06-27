@@ -23,6 +23,10 @@
          sed -i 's/REGION/eu-west-2/' /etc/yum.repos.d/redhat-rhui*.repo
       become: true
 
+    - name: TEMP - AWS Version
+      shell: |
+        aws --version
+
     - name: Create rsyslog.conf configuration file
       copy:
         src: templates/rsyslog.conf
@@ -53,16 +57,16 @@
         enabled: yes
         state: restarted
 
-- name: Transfer and execute HAProxy install script.
-  hosts: all
-  become: yes
-  tasks:
-    - name: Get haproxy
-      unarchive:
-        src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
-        dest: /usr/src/
-        creates: /usr/src/haproxy-1.7.9
-        remote_src: yes
+    - name: Transfer and execute HAProxy install script.
+      hosts: all
+      become: yes
+      tasks:
+        - name: Get haproxy
+          unarchive:
+            src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
+            dest: /usr/src/
+            creates: /usr/src/haproxy-1.7.9
+            remote_src: yes
 
     - name: DNF Install Dependencies
       dnf: name={{ item }}
@@ -146,6 +150,12 @@
         minute: "*"
         hour: "*"
         job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
+
+    - name: Get AWS-CLI
+      shell: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
 
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
