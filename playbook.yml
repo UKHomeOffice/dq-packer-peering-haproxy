@@ -152,10 +152,16 @@
         - "AWS_ACCESS_KEY_ID = '{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}'"
         - "AWS_SECRET_ACCESS_KEY = '{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}'"
         - "region = '{{ lookup('ansible.builtin.env', 'region') }}'"
-        -  "{{ hostvars['localhost'].ansible_facts }}"
+
+    - block:
+        - command: 'echo $AWS_ACCESS_KEY_ID'
+          register: result
+        - debug:
+            var: result.stdout
 
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
+        echo $
          /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
 
     - name: Set CloudWatch logs config executable
