@@ -63,6 +63,13 @@
         - unzip
       become: true
 
+    - name: Create python link
+      file:
+        src: /usr/bin/python3.9
+        dest: /usr/bin/python
+        state: link
+        force: true
+
     - name: Make haproxy
       make:
         chdir: /usr/src/haproxy-1.7.9
@@ -146,43 +153,14 @@
         unzip awscliv2.zip
         sudo ./aws/install
 
-#    - name: TEMP - AWS Version
-#      shell: |
-#        /usr/local/bin/aws --version --debug
-
-    - name: Debug - AWS_ACCESS_KEY_ID
-      ansible.builtin.debug:
-        msg:
-        - "AWS_ACCESS_KEY_ID = '{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}'"
-        - "AWS_SECRET_ACCESS_KEY = '{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}'"
-        - "AWS_DEFAULT_REGION = '{{ lookup('ansible.builtin.env', 'AWS_DEFAULT_REGION') }}'"
-        - "region = '{{ lookup('ansible.builtin.env', 'region') }}'"
-
-#    - name: TEMP - AWS Config
-#      shell: |
-#        /usr/local/bin/aws configure list
-
-#    - name: GET CloudWatch logs config from DQ-config-bucket - config
-#      command: /usr/local/bin/aws configure list
-#      environment:
-#        AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
-#        AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
-
-#    - name: GET CloudWatch logs config from DQ-config-bucket - ls
-#      command: /usr/local/bin/aws s3 ls s3://dq-config-bucket/
-#      environment:
-#        AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
-#        AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
-
     - name: GET CloudWatch logs config from DQ-config-bucket - cp
       command: /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
-      environment:
+      environment: # Shouldn't be necessary to add env vars - but it is
         AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
         AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
 
     - name: Set CloudWatch logs config executable
-      shell: |
-         chmod u+x /tmp/awslogs-agent-setup.py
+      command: chmod u+x /tmp/awslogs-agent-setup.py
 
     - name: Cloudwatch logs config
       copy:
@@ -239,7 +217,7 @@
     - name: Install cloudwatch log agent
       environment:
         LC_ALL: C
-      shell: ln -s -f /usr/bin/python3.9 /usr/bin/python && /tmp/awslogs-agent-setup.py --region eu-west-2 --non-interactive -c /tmp/cwlogs.conf
+      shell: /tmp/awslogs-agent-setup.py --region eu-west-2 --non-interactive -c /tmp/cwlogs.conf
       args:
         creates: /var/awslogs/etc/aws.conf
 
@@ -333,9 +311,11 @@
         block: |
           RES_OPTIONS="rotate timeout:1 attempts:1"
 
-    - name: install selinux bindings and boto3
-      shell: |
-         ln -s -f /usr/bin/python3.9 /usr/bin/python && pip3 install selinux && pip3 install boto3
+    - name: PIP install selinux bindings and boto3
+      pip:
+         name:
+           - selinux
+           - boto3
 
     - name: Configure SSL for HAProxy
       shell: |
