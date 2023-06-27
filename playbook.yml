@@ -162,6 +162,9 @@
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
          /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
+
+    - name: Set CloudWatch logs config executable
+      shell: |
          chmod u+x /tmp/awslogs-agent-setup.py
 
     - name: Cloudwatch logs config
