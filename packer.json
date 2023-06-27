@@ -1,17 +1,11 @@
 {
   "variables": {
-    "access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
-    "secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "region":  "{{env `AWS_DEFAULT_REGION`}}",
     "drone_build_number": "{{env `DRONE_BUILD_NUMBER`}}"
   },
-  "sensitive-variables": ["secret_key"],
   "builders": [
     {
       "type": "amazon-ebs",
-      "access_key": "{{user `access_key`}}",
-      "secret_key": "{{user `secret_key`}}",
-      "region": "{{user `region`}}",
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
@@ -46,7 +40,7 @@
       "playbook_file": "./playbook.yml",
       "extra_arguments": [
         "-v",
-        "--extra-vars", "ansible_shell_type=sh secret_access_key={{user `secret_key`}}",
+        "--extra-vars", "ansible_shell_type=sh",
         "--ssh-extra-args", "-o IdentitiesOnly=yes -o 'HostKeyAlgorithms=+ssh-rsa' -o 'PubkeyAcceptedAlgorithms=+ssh-rsa'",
         "--scp-extra-args", "'-O'"
       ]
