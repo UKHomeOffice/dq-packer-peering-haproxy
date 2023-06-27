@@ -157,7 +157,7 @@
 
     - name: TEMP - AWS Version
       shell: |
-        aws --version
+        /usr/local/bin/aws --version
 
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
