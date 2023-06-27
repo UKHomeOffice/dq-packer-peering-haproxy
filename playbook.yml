@@ -62,6 +62,30 @@
         - unzip
       become: true
 
+    - name: Get AWS-CLI
+      shell: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+
+    - name: TEMP - AWS Version
+      shell: |
+        /usr/local/bin/aws --version --debug
+
+    - name: Debug - AWS_ACCESS_KEY_ID
+      ansible.builtin.debug:
+        msg:
+        - "AWS_ACCESS_KEY_ID = '{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}'"
+        - "AWS_SECRET_ACCESS_KEY = '{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}'"
+        - "AWS_DEFAULT_REGION = '{{ lookup('ansible.builtin.env', 'AWS_DEFAULT_REGION') }}'"
+        - "region = '{{ lookup('ansible.builtin.env', 'region') }}'"
+
+    - name: TEMP - AWS Config
+      shell: |
+        /usr/local/bin/aws configure list
+
+
+
     - name: Make haproxy
       make:
         chdir: /usr/src/haproxy-1.7.9
@@ -136,28 +160,28 @@
         hour: "*"
         job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
 
-    - name: Get AWS-CLI
-      shell: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install
-
-    - name: TEMP - AWS Version
-      shell: |
-        /usr/local/bin/aws --version --debug
-
-    - name: Debug - AWS_ACCESS_KEY_ID
-      ansible.builtin.debug:
-        msg:
-        - "AWS_ACCESS_KEY_ID = '{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}'"
-        - "AWS_SECRET_ACCESS_KEY = '{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}'"
-        - "AWS_DEFAULT_REGION = '{{ lookup('ansible.builtin.env', 'AWS_DEFAULT_REGION') }}'"
-        - "region = '{{ lookup('ansible.builtin.env', 'region') }}'"
-
-    - name: TEMP - AWS Config
-      shell: |
-        /usr/local/bin/aws configure list
-
+#    - name: Get AWS-CLI
+#      shell: |
+#        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+#        unzip awscliv2.zip
+#        sudo ./aws/install
+#
+#    - name: TEMP - AWS Version
+#      shell: |
+#        /usr/local/bin/aws --version --debug
+#
+#    - name: Debug - AWS_ACCESS_KEY_ID
+#      ansible.builtin.debug:
+#        msg:
+#        - "AWS_ACCESS_KEY_ID = '{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}'"
+#        - "AWS_SECRET_ACCESS_KEY = '{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}'"
+#        - "AWS_DEFAULT_REGION = '{{ lookup('ansible.builtin.env', 'AWS_DEFAULT_REGION') }}'"
+#        - "region = '{{ lookup('ansible.builtin.env', 'region') }}'"
+#
+#    - name: TEMP - AWS Config
+#      shell: |
+#        /usr/local/bin/aws configure list
+#
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
         /usr/local/bin/aws configure list --debug
