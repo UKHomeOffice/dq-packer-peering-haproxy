@@ -23,10 +23,6 @@
          sed -i 's/REGION/eu-west-2/' /etc/yum.repos.d/redhat-rhui*.repo
       become: true
 
-    - name: TEMP - AWS Version
-      shell: |
-        aws --version
-
     - name: Create rsyslog.conf configuration file
       copy:
         src: templates/rsyslog.conf
@@ -156,6 +152,10 @@
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
         sudo ./aws/install
+
+    - name: TEMP - AWS Version
+      shell: |
+        aws --version
 
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
