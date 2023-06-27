@@ -1,11 +1,4 @@
 ---
-- name: Pre-reqs for ansible to run
-  hosts: all
-  gather_facts: false
-  become: true
-  pre_tasks:
-    - raw:  test -e /usr/bin/python || ( dnf clean packages && dnf install -y python39 && ln -s -f /usr/bin/python3.9 /usr/bin/python)
-
 - name: Build HA Peering Proxy
   hosts: all
   become: true
