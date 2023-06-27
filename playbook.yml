@@ -6,13 +6,11 @@
   pre_tasks:
     - raw:  test -e /usr/bin/python || ( dnf clean packages && dnf install -y python39 && ln -s -f /usr/bin/python3.9 /usr/bin/python)
 
-- name: Install and configure rsyslog service
+- name: Build HA Peering Proxy
   hosts: all
   become: true
   vars:
     rsyslog_repeated_msg_reduction: "on"
-
-
   tasks:
     - name: Set timezone to Europe/London
       timezone:
@@ -53,10 +51,6 @@
         enabled: yes
         state: restarted
 
-- name: Transfer and execute HAProxy install script.
-  hosts: all
-  become: true
-  tasks:
     - name: Get haproxy
       unarchive:
         src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
