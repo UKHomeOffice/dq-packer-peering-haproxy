@@ -159,6 +159,18 @@
       shell: |
         /usr/local/bin/aws --version
 
+    - name: Debug - HOME
+      ansible.builtin.debug:
+        msg: "'{{ lookup('ansible.builtin.env', 'HOME') }}' is the HOME environment variable."
+
+    - name: Debug - PATH
+      ansible.builtin.debug:
+        msg: "'{{ lookup('ansible.builtin.env', 'PATH') }}' is the HOME environment variable."
+
+    - name: Debug - AWS_ACCESS_KEY_ID
+      ansible.builtin.debug:
+        msg: "'{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}' is the HOME environment variable."
+
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
          /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
