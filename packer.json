@@ -44,10 +44,6 @@
     {
       "type": "ansible",
       "playbook_file": "./playbook.yml",
-      "environment_vars": [
-        "AWS_ACCESS_KEY_ID={{user `access_key`}}",
-        "AWS_SECRET_ACCESS_KEY={{user `secret_key`}}"
-      ],
       "extra_arguments": [
         "-v",
         "--extra-vars", "ansible_shell_type=sh AWS_ACCESS_KEY_ID={{user `access_key`}} AWS_SECRET_ACCESS_KEY={{user `secret_key`}}",
