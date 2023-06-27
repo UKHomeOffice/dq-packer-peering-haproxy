@@ -154,9 +154,14 @@
         - "AWS_DEFAULT_REGION = '{{ lookup('ansible.builtin.env', 'AWS_DEFAULT_REGION') }}'"
         - "region = '{{ lookup('ansible.builtin.env', 'region') }}'"
 
+    - name: TEMP - AWS Config
+      shell: |
+        /usr/local/bin/aws configure list
+
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
-         /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
+        /usr/local/bin/aws configure list
+        /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
 
     - name: Set CloudWatch logs config executable
       shell: |
