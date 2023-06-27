@@ -71,6 +71,8 @@
         - gcc
         - pcre-devel
         - openssl-devel
+        - zip
+        - unzip
       become: true
 
     - name: Make haproxy
