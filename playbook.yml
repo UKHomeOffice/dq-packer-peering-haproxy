@@ -56,6 +56,7 @@
       with_items:
         - make
         - gcc
+        - python39
         - pcre-devel
         - openssl-devel
         - zip
