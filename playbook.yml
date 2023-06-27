@@ -144,7 +144,7 @@
 
     - name: TEMP - AWS Version
       shell: |
-        /usr/local/bin/aws --version
+        /usr/local/bin/aws --version --debug
 
     - name: Debug - AWS_ACCESS_KEY_ID
       ansible.builtin.debug:
