@@ -153,23 +153,12 @@
       shell: |
         /usr/local/bin/aws --version
 
-    - name: Debug - HOME
-      ansible.builtin.debug:
-        msg: "'{{ lookup('ansible.builtin.env', 'HOME') }}' is the HOME environment variable."
-
-    - name: Debug - PATH
-      ansible.builtin.debug:
-        msg: "'{{ lookup('ansible.builtin.env', 'PATH') }}' is the PATH environment variable."
-
-    - name: Debug - AWS_ACCESS_KEY_ID
-      ansible.builtin.debug:
-        msg: "'{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}' is the AWS_ACCESS_KEY_ID environment variable."
-
     - name: Debug - AWS_ACCESS_KEY_ID
       ansible.builtin.debug:
         msg:
-        - "'{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}' is the AWS_ACCESS_KEY_ID environment variable."
-        - "'{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}' is the AWS_SECRET_ACCESS_KEY environment variable."
+        - "AWS_ACCESS_KEY_ID = '{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}'"
+        - "AWS_SECRET_ACCESS_KEY = '{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}'"
+        - "region = '{{ lookup('ansible.builtin.env', 'region') }}'"
 
     - name: GET CloudWatch logs config from DQ-config-bucket
       shell: |
