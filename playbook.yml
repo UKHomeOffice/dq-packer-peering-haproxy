@@ -151,6 +151,7 @@
         msg:
         - "AWS_ACCESS_KEY_ID = '{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}'"
         - "AWS_SECRET_ACCESS_KEY = '{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}'"
+        - "AWS_DEFAULT_REGION = '{{ lookup('ansible.builtin.env', 'AWS_DEFAULT_REGION') }}'"
         - "region = '{{ lookup('ansible.builtin.env', 'region') }}'"
 
     - name: GET CloudWatch logs config from DQ-config-bucket
