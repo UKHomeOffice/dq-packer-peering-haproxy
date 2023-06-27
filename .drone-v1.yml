@@ -36,7 +36,6 @@ x-anchors:
     - echo "export aws_key=$${SECRET_KEY}" >> $${SET_AWS_SECRETS}
     - echo "export region=$${REGION}" >> $${SET_AWS_SECRETS}
     # Since AWS is eventually consistent we need to sleep a little while so the AWS key is created and made available
-    - nosuchexe
     - sleep 20
 
 steps:
