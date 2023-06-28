@@ -1,18 +1,9 @@
 ---
-- name: Pre-reqs for ansible to run
+- name: Build HA Peering Proxy
   hosts: all
-  gather_facts: false
-  become: yes
-  pre_tasks:
-    - raw:  test -e /usr/bin/python || ( dnf clean packages && dnf install -y python39 && ln -s -f /usr/bin/python3.9 /usr/bin/python)
-
-- name: Install and configure rsyslog service
-  hosts: all
-  become: yes
+  become: true
   vars:
     rsyslog_repeated_msg_reduction: "on"
-
-
   tasks:
     - name: Set timezone to Europe/London
       timezone:
@@ -53,10 +44,6 @@
         enabled: yes
         state: restarted
 
-- name: Transfer and execute HAProxy install script.
-  hosts: all
-  become: yes
-  tasks:
     - name: Get haproxy
       unarchive:
         src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
@@ -69,9 +56,19 @@
       with_items:
         - make
         - gcc
+        - python39
         - pcre-devel
         - openssl-devel
+        - zip
+        - unzip
       become: true
+
+    - name: Create python link
+      file:
+        src: /usr/bin/python3.9
+        dest: /usr/bin/python
+        state: link
+        force: true
 
     - name: Make haproxy
       make:
@@ -135,7 +132,10 @@
         state: started
 
     - name: Transfer the script
-      copy: src=templates/gets3content.py dest=/home/ec2-user mode=0777
+      copy:
+        src: templates/gets3content.py
+        dest: /home/ec2-user
+        mode: 0777
 
     - name: Test haproxy is running and listening
       shell: echo test >/dev/tcp/localhost/23
@@ -147,10 +147,20 @@
         hour: "*"
         job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
 
-    - name: Download cloudwatch logs agent
+    - name: Get AWS-CLI
       shell: |
-         export AWS_ACCESS_KEY_ID="{{ access_key }}" && export AWS_SECRET_ACCESS_KEY="{{ secret_key }}" && /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
-         chmod u+x /tmp/awslogs-agent-setup.py
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+
+    - name: GET CloudWatch logs config from DQ-config-bucket - cp
+      command: /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
+      environment: # Shouldn't be necessary to add env vars - but it is
+        AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
+
+    - name: Set CloudWatch logs config executable
+      command: chmod u+x /tmp/awslogs-agent-setup.py
 
     - name: Cloudwatch logs config
       copy:
@@ -207,7 +217,7 @@
     - name: Install cloudwatch log agent
       environment:
         LC_ALL: C
-      shell: ln -s -f /usr/bin/python3.9 /usr/bin/python && /tmp/awslogs-agent-setup.py --region eu-west-2 --non-interactive -c /tmp/cwlogs.conf
+      shell: /tmp/awslogs-agent-setup.py --region eu-west-2 --non-interactive -c /tmp/cwlogs.conf
       args:
         creates: /var/awslogs/etc/aws.conf
 
@@ -301,9 +311,11 @@
         block: |
           RES_OPTIONS="rotate timeout:1 attempts:1"
 
-    - name: install selinux bindings and boto3
-      shell: |
-         ln -s -f /usr/bin/python3.9 /usr/bin/python && pip3 install selinux && pip3 install boto3
+    - name: PIP install selinux bindings and boto3
+      pip:
+         name:
+           - selinux
+           - boto3
 
     - name: Configure SSL for HAProxy
       shell: |
