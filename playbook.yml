@@ -44,11 +44,11 @@
         enabled: yes
         state: restarted
 
-    - name: Get haproxy
+    - name: Get haproxy - 1.7.14 (2021-03-31) # Look out for updates - they seem to happen ~once per year
       unarchive:
-        src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.9.tar.gz
+        src: http://www.haproxy.org/download/1.7/src/haproxy-1.7.14.tar.gz
         dest: /usr/src/
-        creates: /usr/src/haproxy-1.7.9
+        creates: /usr/src/haproxy-1.7.14
         remote_src: yes
 
     - name: DNF Install Dependencies
@@ -72,7 +72,7 @@
 
     - name: Make haproxy
       make:
-        chdir: /usr/src/haproxy-1.7.9
+        chdir: /usr/src/haproxy-1.7.14
         params:
           TARGET: linux2628
           USE_PCRE: 1
@@ -82,13 +82,13 @@
 
     - name: Install haproxy
       make:
-        chdir: /usr/src/haproxy-1.7.9
+        chdir: /usr/src/haproxy-1.7.14
         target: install
 
     - name: Copy haproxy.init
       copy:
         remote_src: yes
-        src: /usr/src/haproxy-1.7.9/examples/haproxy.init
+        src: /usr/src/haproxy-1.7.14/examples/haproxy.init
         dest: /etc/init.d/haproxy
         mode: 0755
 
@@ -155,9 +155,6 @@
 
     - name: GET CloudWatch logs config from DQ-config-bucket - cp
       command: /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
-      environment: # Shouldn't be necessary to add env vars - but it is
-        AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
-        AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
 
     - name: Set CloudWatch logs config executable
       command: chmod u+x /tmp/awslogs-agent-setup.py
