@@ -3,7 +3,8 @@
     "access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "region":  "{{env `AWS_DEFAULT_REGION`}}",
-    "drone_build_number": "{{env `DRONE_BUILD_NUMBER`}}"
+    "drone_build_number": "{{env `DRONE_BUILD_NUMBER`}}",
+    "drone_repo_name": "{{env `DRONE_REPO_NAME`}}"
   },
   "sensitive-variables": ["access_key", "secret_key"],
   "builders": [
@@ -23,6 +24,9 @@
           "309956199498"
         ],
         "most_recent": true
+      },
+      "run_tags":{
+            "Name": "Packer Build [{{user `drone_repo_name`}}: {{user `drone_build_number`}}]"
       },
       "launch_block_device_mappings": [
         {
@@ -46,7 +50,7 @@
       "type": "ansible",
       "playbook_file": "./playbook.yml",
       "extra_arguments": [
-        "--extra-vars", "ansible_shell_type=sh AWS_ACCESS_KEY_ID={{user `access_key`}} AWS_SECRET_ACCESS_KEY={{user `secret_key`}}",
+        "--extra-vars", "ansible_shell_type=sh",
         "--ssh-extra-args", "-o IdentitiesOnly=yes -o 'HostKeyAlgorithms=+ssh-rsa' -o 'PubkeyAcceptedAlgorithms=+ssh-rsa'",
         "--scp-extra-args", "'-O'"
       ]
