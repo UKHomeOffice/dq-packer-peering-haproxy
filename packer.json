@@ -50,6 +50,7 @@
       "type": "ansible",
       "playbook_file": "./playbook.yml",
       "extra_arguments": [
+        "-vvv",
         "--extra-vars", "ansible_shell_type=sh",
         "--ssh-extra-args", "-o IdentitiesOnly=yes -o 'HostKeyAlgorithms=+ssh-rsa' -o 'PubkeyAcceptedAlgorithms=+ssh-rsa'",
         "--scp-extra-args", "'-O'"
