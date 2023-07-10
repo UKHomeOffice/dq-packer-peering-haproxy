@@ -135,7 +135,7 @@
       copy:
         src: templates/gets3content.py
         dest: /home/ec2-user
-        mode: 0777
+        mode: 0555
 
     - name: Test haproxy is running and listening
       shell: echo test >/dev/tcp/localhost/23
@@ -143,7 +143,7 @@
     - name: CRON to copy HAProxy config from S3
       cron:
         name: "copy HAProxy config from S3"
-        minute: "*"
+        minute: "*/5"
         hour: "*"
         job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
 
@@ -313,6 +313,7 @@
          name:
            - selinux
            - boto3
+         executable: pip3.9
 
     - name: Configure SSL for HAProxy
       shell: |
