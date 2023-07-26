@@ -14,6 +14,7 @@
          sed -i 's/REGION/eu-west-2/' /etc/yum.repos.d/redhat-rhui*.repo
       become: true
 
+
     - name: Create rsyslog.conf configuration file
       copy:
         src: templates/rsyslog.conf
@@ -51,6 +52,10 @@
         creates: /usr/src/haproxy-1.7.14
         remote_src: yes
 
+    - name: perform dnf group install
+      shell:
+        dnf group install 'Development Tools' -y
+
     - name: DNF Install Dependencies
       dnf: name={{ item }}
       with_items:
@@ -61,7 +66,31 @@
         - openssl-devel
         - zip
         - unzip
+        - wget
+        - perl-core
+        - zlib-devel
       become: true
+
+    - name: Attempting to install perl-IPC-Cmd through shell
+      shell:
+        dnf install perl-IPC-Cmd -y
+
+    - name: get openssl and build from source
+      shell: |
+        cd /tmp && wget https://www.openssl.org/source/openssl-3.0.9.tar.gz && tar -xzvf openssl-*.tar.gz && rm -rf openssl-*.tar.gz
+        cd /tmp/openssl-* && ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
+        make && make install
+
+    - name: Create openssl-3.0.9.conf file
+      copy:
+        src: scripts/openssl-3.0.9.conf
+        dest: /etc/ld.so.conf.d/openssl-3.0.9.conf
+      become: true
+
+    - name: backup old binary and install openssl
+      shell: |
+        mv /usr/bin/openssl /usr/bin/openssl.bak
+        update-alternatives --install /usr/bin/openssl openssl /usr/local/ssl/bin/openssl 1
 
     - name: Create python link
       file:
@@ -220,7 +249,7 @@
 
     - name: Copy cloudwatch logs starter
       copy:
-        src: startcloudwatchlogs.sh
+        src: scripts/startcloudwatchlogs.sh
         dest: /usr/bin/startcloudwatchlogs.sh
         owner: root
         group: root
