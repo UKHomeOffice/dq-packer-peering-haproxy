@@ -329,6 +329,10 @@
         regexp: "^PermitRootLogin"
         line: "PermitRootLogin no"
         state: present
+    - lineinfile: dest=/etc/ssh/sshd_config
+                regexp="^(.*)AllowTcpForwarding"
+                line="AllowTcpForwarding no"
+                state=present
 
     - name: sshd_config - PasswordAuthentication no
       lineinfile:
