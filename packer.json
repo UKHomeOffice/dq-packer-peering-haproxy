@@ -39,6 +39,11 @@
       "instance_type": "t3.large",
       "ssh_username": "ec2-user",
       "ami_name": "dq-peering-haproxy {{user `drone_build_number`}}",
+      "metadata_options": {
+        "http_endpoint": "enabled",
+        "http_tokens": "required",
+        "http_put_response_hop_limit": 1
+      },
       "ami_users": [
         "483846886818",
         "337779336338"
