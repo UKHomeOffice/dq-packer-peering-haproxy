@@ -7,7 +7,7 @@
   vars_files:
     - ./vars/dqusers.yml
   tasks:
-  - name: Create users for dqsupport members
+    - name: Create users for dqsupport members
       user:
           name: "{{ item.name }}"
           shell: /bin/bash
@@ -29,6 +29,7 @@
       - "{{ dqusers }}" 
       become: true
       become_user: root
+      
     - name: Set timezone to Europe/London
       timezone:
         name: Europe/London
