@@ -8,6 +8,7 @@
     - name: DNF Install Dependencies
       dnf: name={{ item }}
       with_items:
+        - make
         - zip
         - unzip
         - git
