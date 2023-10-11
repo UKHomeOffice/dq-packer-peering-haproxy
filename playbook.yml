@@ -203,12 +203,6 @@
         hour: "*"
         job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
 
-    - name: Get AWS-CLI
-      shell: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install
-
     - name: GET CloudWatch logs config from DQ-config-bucket - cp
       command: /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
 
