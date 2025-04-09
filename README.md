@@ -1,6 +1,6 @@
 # dq-packer-peering-haproxy
 This repository creates an AMI in AWS with [HAProxy](http://www.haproxy.org/download/1.7/doc/intro.txt) with logging to [rsyslog](https://www.rsyslog.com/)
-
+#
 
 ## `packer.json`
 This file contains a wrap up for Ansible script to be run inside small Red Hat Enterprise Linux 8.x machine
