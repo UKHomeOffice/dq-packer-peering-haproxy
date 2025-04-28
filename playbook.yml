@@ -286,8 +286,7 @@
         content: |
           {
             "agent": {
-              "metrics_collection_interval": 60,
-              "run_as_user": "ec2-user"
+              "metrics_collection_interval": 60
             },
             "metrics": {
               "namespace": "CWAgent",
@@ -329,19 +328,64 @@
                   "collect_list": [
                     {
                       "file_path": "/var/log/messages",
-                      "log_group_name": "/var/log/messages",
-                      "log_stream_name": "{instance_id}"
+                      "log_group_name": "/HAPROXY/messages",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%b %d %H:%M:%S"
                     },
                     {
                       "file_path": "/var/log/cloud-init.log",
-                      "log_group_name": "/var/log/cloud-init",
-                      "log_stream_name": "{instance_id}"
+                      "log_group_name": "/HAPROXY/cloud-init",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
+                    },
+                    {
+                      "file_path": "/var/log/cloud-init-output.log",
+                      "log_group_name": "/HAPROXY/cloud-init/output",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
+                    },
+                    {
+                      "file_path": "/var/log/cron",
+                      "log_group_name": "/HAPROXY/cron",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
+                    },
+                    {
+                      "file_path": "/var/log/secure",
+                      "log_group_name": "/HAPROXY/secure",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
+                    },
+                    {
+                      "file_path": "/var/log/yum.log",
+                      "log_group_name": "/HAPROXY/yum",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
+                    },
+                    {
+                      "file_path": "/var/log/haproxy.log",
+                      "log_group_name": "/HAPROXY/haproxy",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
+                    },
+                    {
+                      "file_path": "/var/log/rsyslog",
+                      "log_group_name": "/HAPROXY/rsyslog",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
+                    },
+                    {
+                      "file_path": "/var/log/syslog",
+                      "log_group_name": "/HAPROXY/syslog",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
                     }
                   ]
                 }
               }
             }
           }
+
     - name: Start unified CloudWatch Agent with config
       shell: |
         /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
