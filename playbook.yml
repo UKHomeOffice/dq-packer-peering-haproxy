@@ -202,7 +202,7 @@
         name: "copy HAProxy config from S3"
         minute: "*/5"
         hour: "*"
-        job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py
+        job: source /home/ec2-user/env_vars && python3 /home/ec2-user/gets3content.py >> /var/log/cron_output.log 2>&1
 
     - name: GET CloudWatch logs config from DQ-config-bucket - cp
       command: /usr/local/bin/aws s3 cp s3://dq-config-bucket/dq-tableau-linux/awslogs-agent-setup.py /tmp
@@ -233,6 +233,10 @@
           datetime_format = %Y-%m-%d %H:%M:%S,%f
           [/HAPROXY/cron]
           file = /var/log/cron
+          log_group_name = /HAPROXY/cron
+          log_stream_name = {instance_id}
+          [/HAPROXY/cron-output]
+          file = /var/log/cron_output.log
           log_group_name = /HAPROXY/cron
           log_stream_name = {instance_id}
           datetime_format = %Y-%m-%d %H:%M:%S,%f
@@ -346,6 +350,12 @@
                     },
                     {
                       "file_path": "/var/log/cron",
+                      "log_group_name": "/HAPROXY/cron",
+                      "log_stream_name": "{instance_id}",
+                      "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
+                    },
+                    {
+                      "file_path": "/var/log/cron_output.log",
                       "log_group_name": "/HAPROXY/cron",
                       "log_stream_name": "{instance_id}",
                       "timestamp_format": "%Y-%m-%d %H:%M:%S,%f"
