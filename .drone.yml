@@ -96,7 +96,7 @@ steps:
       # Get the AMI ID 
       AMI_INFO=$(aws ec2 describe-images \
         --owners 093401982388 \
-        --filters "Name=name,Values=dq-peering-haproxy-*" \
+        --filters "Name=name,Values=dq-peering-haproxy*" \
         --query 'Images | sort_by(@, &CreationDate)[-1].[ImageId,Name]' \
         --output text)
 
